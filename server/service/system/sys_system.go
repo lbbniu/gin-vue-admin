@@ -46,15 +46,15 @@ func (systemConfigService *SystemConfigService) GetServerInfo() (server *servera
 	var s serverapi.Server
 	s.Os = serverapi.InitOS()
 	if s.Cpu, err = serverapi.InitCPU(); err != nil {
-		global.GVA_LOG.Error("func utils.InitCPU() Failed", zap.String("err", err.Error()))
+		global.GVA_LOG.Error("func serverapi.InitCPU() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
 	if s.Ram, err = serverapi.InitRAM(); err != nil {
-		global.GVA_LOG.Error("func utils.InitRAM() Failed", zap.String("err", err.Error()))
+		global.GVA_LOG.Error("func serverapi.InitRAM() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
 	if s.Disk, err = serverapi.InitDisk(); err != nil {
-		global.GVA_LOG.Error("func utils.InitDisk() Failed", zap.String("err", err.Error()))
+		global.GVA_LOG.Error("func serverapi.InitDisk() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
 
