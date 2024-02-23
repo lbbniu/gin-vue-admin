@@ -1,8 +1,9 @@
-package utils
+package validator
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"testing"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 )
 
 type PageInfoTest struct {

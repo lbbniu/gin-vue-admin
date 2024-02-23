@@ -6,7 +6,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
 	exampleRes "github.com/flipped-aurora/gin-vue-admin/server/model/example/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -29,13 +30,13 @@ func (e *CustomerApi) CreateExaCustomer(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(customer, utils.CustomerVerify)
+	err = validator.Verify(customer, validator.CustomerVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	customer.SysUserID = utils.GetUserID(c)
-	customer.SysUserAuthorityID = utils.GetUserAuthorityId(c)
+	customer.SysUserID = jwt.GetUserID(c)
+	customer.SysUserAuthorityID = jwt.GetUserAuthorityId(c)
 	err = customerService.CreateExaCustomer(customer)
 	if err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Error(err))
@@ -61,7 +62,7 @@ func (e *CustomerApi) DeleteExaCustomer(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(customer.GVA_MODEL, utils.IdVerify)
+	err = validator.Verify(customer.GVA_MODEL, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -91,12 +92,12 @@ func (e *CustomerApi) UpdateExaCustomer(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(customer.GVA_MODEL, utils.IdVerify)
+	err = validator.Verify(customer.GVA_MODEL, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(customer, utils.CustomerVerify)
+	err = validator.Verify(customer, validator.CustomerVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -126,7 +127,7 @@ func (e *CustomerApi) GetExaCustomer(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(customer.GVA_MODEL, utils.IdVerify)
+	err = validator.Verify(customer.GVA_MODEL, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -156,12 +157,12 @@ func (e *CustomerApi) GetExaCustomerList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(pageInfo, utils.PageInfoVerify)
+	err = validator.Verify(pageInfo, validator.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	customerList, total, err := customerService.GetCustomerInfoList(utils.GetUserAuthorityId(c), pageInfo)
+	customerList, total, err := customerService.GetCustomerInfoList(jwt.GetUserAuthorityId(c), pageInfo)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败"+err.Error(), c)

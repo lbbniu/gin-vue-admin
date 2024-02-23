@@ -6,7 +6,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -104,7 +104,7 @@ func (s *OperationRecordApi) FindSysOperationRecord(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(sysOperationRecord, utils.IdVerify)
+	err = validator.Verify(sysOperationRecord, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

@@ -3,8 +3,8 @@ package system
 import (
 	"context"
 	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/hash"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gofrs/uuid/v5"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
@@ -44,8 +44,8 @@ func (i *initUser) InitializeData(ctx context.Context) (next context.Context, er
 	if !ok {
 		return ctx, system.ErrMissingDBContext
 	}
-	password := utils.BcryptHash("6447985")
-	adminPassword := utils.BcryptHash("123456")
+	password := hash.BcryptHash("6447985")
+	adminPassword := hash.BcryptHash("123456")
 
 	entities := []sysModel.SysUser{
 		{

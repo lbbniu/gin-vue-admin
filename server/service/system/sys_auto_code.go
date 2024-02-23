@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
+	os2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/os"
+	zip2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/zip"
 	"io"
 	"mime/multipart"
 	"os"
@@ -13,7 +16,7 @@ import (
 	"strings"
 	"text/template"
 
-	ast2 "github.com/flipped-aurora/gin-vue-admin/server/utils/ast"
+	ast2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/ast"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/resource/autocode_template/subcontract"
 	cp "github.com/otiai10/copy"
@@ -21,8 +24,6 @@ import (
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-
 	"gorm.io/gorm"
 )
 
@@ -182,7 +183,7 @@ func (autoCodeService *AutoCodeService) PreviewTemp(autoCode system.AutoCodeStru
 	}
 
 	// 写入文件前，先创建文件夹
-	if err = utils.CreateDir(needMkdir...); err != nil {
+	if err = os2.CreateDir(needMkdir...); err != nil {
 		return nil, err
 	}
 
@@ -313,7 +314,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 	}
 
 	// 写入文件前，先创建文件夹
-	if err = utils.CreateDir(needMkdir...); err != nil {
+	if err = os2.CreateDir(needMkdir...); err != nil {
 		return err
 	}
 
@@ -348,12 +349,12 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 		}
 		// 判断目标文件是否都可以移动
 		for _, value := range dataList {
-			if utils.FileExist(value.autoMoveFilePath) {
+			if os2.FileExist(value.autoMoveFilePath) {
 				return errors.New(fmt.Sprintf("目标文件已存在:%s\n", value.autoMoveFilePath))
 			}
 		}
 		for _, value := range dataList { // 移动文件
-			if err := utils.FileMove(value.autoCodePath, value.autoMoveFilePath); err != nil {
+			if err := os2.FileMove(value.autoCodePath, value.autoMoveFilePath); err != nil {
 				return err
 			}
 		}
@@ -362,7 +363,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 			// 在gorm.go 注入 自动迁移
 			path := filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 				global.GVA_CONFIG.AutoCode.Server, global.GVA_CONFIG.AutoCode.SInitialize, "gorm.go")
-			varDB := utils.MaheHump(autoCode.BusinessDB)
+			varDB := fmt2.MaheHump(autoCode.BusinessDB)
 			ast2.AddRegisterTablesAst(path, "RegisterTables", autoCode.Package, varDB, autoCode.BusinessDB, autoCode.StructName)
 		}
 
@@ -385,7 +386,7 @@ func (autoCodeService *AutoCodeService) CreateTemp(autoCode system.AutoCodeStruc
 			}
 		}
 	} else { // 打包
-		if err = utils.ZipFiles("./ginvueadmin.zip", fileList, ".", "."); err != nil {
+		if err = zip2.Files("./ginvueadmin.zip", fileList, ".", "."); err != nil {
 			return err
 		}
 	}
@@ -571,9 +572,9 @@ func (autoCodeService *AutoCodeService) AutoCreateApi(a *system.AutoCodeStruct) 
 
 func (autoCodeService *AutoCodeService) getNeedList(autoCode *system.AutoCodeStruct) (dataList []tplData, fileList []string, needMkdir []string, err error) {
 	// 去除所有空格
-	utils.TrimSpace(autoCode)
+	os2.TrimSpace(autoCode)
 	for _, field := range autoCode.Fields {
-		utils.TrimSpace(field)
+		os2.TrimSpace(field)
 	}
 	// 获取 basePath 文件夹下所有tpl文件
 	tplFileList, err := autoCodeService.GetAllTplFile(autocodePath, nil)
@@ -708,7 +709,7 @@ func (autoCodeService *AutoCodeService) CreatePackageTemp(packageName string) er
 	// 创建完成后在对应的位置插入结构代码
 	for _, v := range pendingTemp {
 		meta := packageInjectionMap[v.name]
-		if err := ast2.ImportReference(meta.path, fmt.Sprintf(meta.importCodeF, v.name, packageName), fmt.Sprintf(meta.structNameF, utils.FirstUpper(packageName)), fmt.Sprintf(meta.packageNameF, packageName), meta.groupName); err != nil {
+		if err := ast2.ImportReference(meta.path, fmt.Sprintf(meta.importCodeF, v.name, packageName), fmt.Sprintf(meta.structNameF, fmt2.FirstUpper(packageName)), fmt.Sprintf(meta.packageNameF, packageName), meta.groupName); err != nil {
 			return err
 		}
 	}
@@ -770,7 +771,7 @@ func (autoCodeService *AutoCodeService) InstallPlugin(file *multipart.FileHeader
 
 	_, err = io.Copy(out, src)
 
-	paths, err := utils.Unzip(GVAPLUGPINATH+file.Filename, GVAPLUGPINATH)
+	paths, err := zip2.Unzip(GVAPLUGPINATH+file.Filename, GVAPLUGPINATH)
 	paths = filterFile(paths)
 	var webIndex = -1
 	var serverIndex = -1

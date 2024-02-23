@@ -4,7 +4,7 @@ import (
 	"github.com/qiniu/qmgo"
 	"sync"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/timer"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/timer"
 	"github.com/songzhibin97/gkit/cache/local_cache"
 
 	"golang.org/x/sync/singleflight"

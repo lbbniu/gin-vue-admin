@@ -11,13 +11,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 var operationRecordService = service.ServiceGroupApp.SystemServiceGroup.OperationRecordService
@@ -56,7 +56,7 @@ func OperationRecord() gin.HandlerFunc {
 			}
 			body, _ = json.Marshal(&m)
 		}
-		claims, _ := utils.GetClaims(c)
+		claims, _ := jwt.GetClaims(c)
 		if claims != nil && claims.BaseClaims.ID != 0 {
 			userId = int(claims.BaseClaims.ID)
 		} else {

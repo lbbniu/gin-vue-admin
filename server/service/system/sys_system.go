@@ -1,11 +1,13 @@
 package system
 
 import (
+	"go.uber.org/zap"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
+	serverapi "github.com/flipped-aurora/gin-vue-admin/server/pkg/server"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -27,7 +29,7 @@ func (systemConfigService *SystemConfigService) GetSystemConfig() (conf config.S
 //@return: err error
 
 func (systemConfigService *SystemConfigService) SetSystemConfig(system system.System) (err error) {
-	cs := utils.StructToMap(system.Config)
+	cs := fmt.StructToMap(system.Config)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
 	}
@@ -40,18 +42,18 @@ func (systemConfigService *SystemConfigService) SetSystemConfig(system system.Sy
 //@description: 获取服务器信息
 //@return: server *utils.Server, err error
 
-func (systemConfigService *SystemConfigService) GetServerInfo() (server *utils.Server, err error) {
-	var s utils.Server
-	s.Os = utils.InitOS()
-	if s.Cpu, err = utils.InitCPU(); err != nil {
+func (systemConfigService *SystemConfigService) GetServerInfo() (server *serverapi.Server, err error) {
+	var s serverapi.Server
+	s.Os = serverapi.InitOS()
+	if s.Cpu, err = serverapi.InitCPU(); err != nil {
 		global.GVA_LOG.Error("func utils.InitCPU() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
-	if s.Ram, err = utils.InitRAM(); err != nil {
+	if s.Ram, err = serverapi.InitRAM(); err != nil {
 		global.GVA_LOG.Error("func utils.InitRAM() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}
-	if s.Disk, err = utils.InitDisk(); err != nil {
+	if s.Disk, err = serverapi.InitDisk(); err != nil {
 		global.GVA_LOG.Error("func utils.InitDisk() Failed", zap.String("err", err.Error()))
 		return &s, err
 	}

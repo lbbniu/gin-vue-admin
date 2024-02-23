@@ -1,4 +1,4 @@
-package utils
+package zip
 
 import (
 	"archive/zip"
@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-// 解压
+// Unzip 解压
 func Unzip(zipFile string, destDir string) ([]string, error) {
 	zipReader, err := zip.OpenReader(zipFile)
 	var paths []string
@@ -52,7 +52,7 @@ func Unzip(zipFile string, destDir string) ([]string, error) {
 	return paths, nil
 }
 
-func ZipFiles(filename string, files []string, oldForm, newForm string) error {
+func Files(filename string, files []string, oldForm, newForm string) error {
 	newZipFile, err := os.Create(filename)
 	if err != nil {
 		return err

@@ -8,7 +8,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/example"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/upload"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/upload"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)

@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
 	"path/filepath"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
 	"github.com/gookit/color"
-
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
@@ -33,7 +32,7 @@ func (h PgsqlInitHandler) WriteConfig(ctx context.Context) error {
 	global.GVA_CONFIG.System.DbType = "pgsql"
 	global.GVA_CONFIG.Pgsql = c
 	global.GVA_CONFIG.JWT.SigningKey = uuid.Must(uuid.NewV4()).String()
-	cs := utils.StructToMap(global.GVA_CONFIG)
+	cs := fmt2.StructToMap(global.GVA_CONFIG)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
 	}

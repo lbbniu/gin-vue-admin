@@ -2,12 +2,12 @@ package system
 
 import (
 	"context"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/time"
 
 	"go.uber.org/zap"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 )
 
 type JwtService struct{}
@@ -60,7 +60,7 @@ func (jwtService *JwtService) GetRedisJWT(userName string) (redisJWT string, err
 
 func (jwtService *JwtService) SetRedisJWT(jwt string, userName string) (err error) {
 	// 此处过期时间等于jwt过期时间
-	dr, err := utils.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
+	dr, err := time.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
 	if err != nil {
 		return err
 	}

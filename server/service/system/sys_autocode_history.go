@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils/ast"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/ast"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/injection"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -15,8 +17,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-
 	"go.uber.org/zap"
 )
 
@@ -104,11 +104,11 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		nPath := filepath.Join(global.GVA_CONFIG.AutoCode.Root,
 			"rm_file", time.Now().Format("20060102"), filepath.Base(filepath.Dir(filepath.Dir(path))), filepath.Base(filepath.Dir(path)), filepath.Base(path))
 		// 判断目标文件是否存在
-		for utils.FileExist(nPath) {
+		for os.FileExist(nPath) {
 			fmt.Println("文件已存在:", nPath)
 			nPath += fmt.Sprintf("_%d", time.Now().Nanosecond())
 		}
-		err = utils.FileMove(path, nPath)
+		err = os.FileMove(path, nPath)
 		if err != nil {
 			global.GVA_LOG.Error("file move err ", zap.Error(err))
 		}
@@ -119,7 +119,7 @@ func (autoCodeHistoryService *AutoCodeHistoryService) RollBack(info *systemReq.R
 		// RouterPath@functionName@RouterString
 		meta := strings.Split(v, "@")
 		if len(meta) == 3 {
-			_ = utils.AutoClearCode(meta[0], meta[2])
+			_ = injection.AutoClearCode(meta[0], meta[2])
 		}
 	}
 

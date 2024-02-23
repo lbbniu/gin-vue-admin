@@ -5,7 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -28,7 +28,7 @@ func (cas *CasbinApi) UpdateCasbin(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(cmr, utils.AuthorityIdVerify)
+	err = validator.Verify(cmr, validator.AuthorityIdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -58,7 +58,7 @@ func (cas *CasbinApi) GetPolicyPathByAuthorityId(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(casbin, utils.AuthorityIdVerify)
+	err = validator.Verify(casbin, validator.AuthorityIdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

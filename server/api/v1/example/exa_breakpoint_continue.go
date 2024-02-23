@@ -2,6 +2,7 @@ package example
 
 import (
 	"fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/breakpoint"
 	"io"
 	"mime/multipart"
 	"strconv"
@@ -11,7 +12,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	exampleRes "github.com/flipped-aurora/gin-vue-admin/server/model/example/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -50,7 +50,7 @@ func (b *FileUploadAndDownloadApi) BreakpointContinue(c *gin.Context) {
 		}
 	}(f)
 	cen, _ := io.ReadAll(f)
-	if !utils.CheckMd5(cen, chunkMd5) {
+	if !breakpoint.CheckMd5(cen, chunkMd5) {
 		global.GVA_LOG.Error("检查md5失败!", zap.Error(err))
 		response.FailWithMessage("检查md5失败", c)
 		return
@@ -61,7 +61,7 @@ func (b *FileUploadAndDownloadApi) BreakpointContinue(c *gin.Context) {
 		response.FailWithMessage("查找或创建记录失败", c)
 		return
 	}
-	pathC, err := utils.BreakPointContinue(cen, fileName, chunkNumber, chunkTotal, fileMd5)
+	pathC, err := breakpoint.BreakPointContinue(cen, fileName, chunkNumber, chunkTotal, fileMd5)
 	if err != nil {
 		global.GVA_LOG.Error("断点续传失败!", zap.Error(err))
 		response.FailWithMessage("断点续传失败", c)
@@ -110,7 +110,7 @@ func (b *FileUploadAndDownloadApi) FindFile(c *gin.Context) {
 func (b *FileUploadAndDownloadApi) BreakpointContinueFinish(c *gin.Context) {
 	fileMd5 := c.Query("fileMd5")
 	fileName := c.Query("fileName")
-	filePath, err := utils.MakeFile(fileName, fileMd5)
+	filePath, err := breakpoint.MakeFile(fileName, fileMd5)
 	if err != nil {
 		global.GVA_LOG.Error("文件创建失败!", zap.Error(err))
 		response.FailWithDetailed(exampleRes.FilePathResponse{FilePath: filePath}, "文件创建失败", c)
@@ -135,7 +135,7 @@ func (b *FileUploadAndDownloadApi) RemoveChunk(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.RemoveChunk(file.FileMd5)
+	err = breakpoint.RemoveChunk(file.FileMd5)
 	if err != nil {
 		global.GVA_LOG.Error("缓存切片删除失败!", zap.Error(err))
 		return

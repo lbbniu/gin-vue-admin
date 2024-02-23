@@ -4,17 +4,18 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
+	"go.uber.org/zap"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-
-	"github.com/gin-gonic/gin"
-	"github.com/redis/go-redis/v9"
-	"go.uber.org/zap"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 )
 
 // Login
@@ -33,7 +34,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(l, utils.LoginVerify)
+	err = validator.Verify(l, validator.LoginVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -76,7 +77,7 @@ func (b *BaseApi) Login(c *gin.Context) {
 
 // TokenNext 登录以后签发jwt
 func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
-	j := &utils.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)} // 唯一签名
+	j := &jwt.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)} // 唯一签名
 	claims := j.CreateClaims(systemReq.BaseClaims{
 		UUID:        user.UUID,
 		ID:          user.ID,
@@ -91,7 +92,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 		return
 	}
 	if !global.GVA_CONFIG.System.UseMultipoint {
-		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		jwt.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -106,7 +107,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		jwt.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -126,7 +127,7 @@ func (b *BaseApi) TokenNext(c *gin.Context, user system.SysUser) {
 			response.FailWithMessage("设置登录状态失败", c)
 			return
 		}
-		utils.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
+		jwt.SetToken(c, token, int(claims.RegisteredClaims.ExpiresAt.Unix()-time.Now().Unix()))
 		response.OkWithDetailed(systemRes.LoginResponse{
 			User:      user,
 			Token:     token,
@@ -149,7 +150,7 @@ func (b *BaseApi) Register(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(r, utils.RegisterVerify)
+	err = validator.Verify(r, validator.RegisterVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -185,12 +186,12 @@ func (b *BaseApi) ChangePassword(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(req, utils.ChangePasswordVerify)
+	err = validator.Verify(req, validator.ChangePasswordVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	uid := utils.GetUserID(c)
+	uid := jwt.GetUserID(c)
 	u := &system.SysUser{GVA_MODEL: global.GVA_MODEL{ID: uid}, Password: req.Password}
 	_, err = userService.ChangePassword(u, req.NewPassword)
 	if err != nil {
@@ -217,7 +218,7 @@ func (b *BaseApi) GetUserList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(pageInfo, utils.PageInfoVerify)
+	err = validator.Verify(pageInfo, validator.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -252,19 +253,19 @@ func (b *BaseApi) SetUserAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if UserVerifyErr := utils.Verify(sua, utils.SetUserAuthorityVerify); UserVerifyErr != nil {
+	if UserVerifyErr := validator.Verify(sua, validator.SetUserAuthorityVerify); UserVerifyErr != nil {
 		response.FailWithMessage(UserVerifyErr.Error(), c)
 		return
 	}
-	userID := utils.GetUserID(c)
+	userID := jwt.GetUserID(c)
 	err = userService.SetUserAuthority(userID, sua.AuthorityId)
 	if err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Error(err))
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	claims := utils.GetUserInfo(c)
-	j := &utils.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)} // 唯一签名
+	claims := jwt.GetUserInfo(c)
+	j := &jwt.JWT{SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey)} // 唯一签名
 	claims.AuthorityId = sua.AuthorityId
 	if token, err := j.CreateToken(*claims); err != nil {
 		global.GVA_LOG.Error("修改失败!", zap.Error(err))
@@ -272,7 +273,7 @@ func (b *BaseApi) SetUserAuthority(c *gin.Context) {
 	} else {
 		c.Header("new-token", token)
 		c.Header("new-expires-at", strconv.FormatInt(claims.ExpiresAt.Unix(), 10))
-		utils.SetToken(c, token, int((claims.ExpiresAt.Unix()-time.Now().Unix())/60))
+		jwt.SetToken(c, token, int((claims.ExpiresAt.Unix()-time.Now().Unix())/60))
 		response.OkWithMessage("修改成功", c)
 	}
 }
@@ -318,12 +319,12 @@ func (b *BaseApi) DeleteUser(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(reqId, utils.IdVerify)
+	err = validator.Verify(reqId, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	jwtId := utils.GetUserID(c)
+	jwtId := jwt.GetUserID(c)
 	if jwtId == uint(reqId.ID) {
 		response.FailWithMessage("删除失败, 自杀失败", c)
 		return
@@ -353,7 +354,7 @@ func (b *BaseApi) SetUserInfo(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(user, utils.IdVerify)
+	err = validator.Verify(user, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -402,7 +403,7 @@ func (b *BaseApi) SetSelfInfo(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	user.ID = utils.GetUserID(c)
+	user.ID = jwt.GetUserID(c)
 	err = userService.SetSelfInfo(system.SysUser{
 		GVA_MODEL: global.GVA_MODEL{
 			ID: user.ID,
@@ -431,7 +432,7 @@ func (b *BaseApi) SetSelfInfo(c *gin.Context) {
 // @Success   200  {object}  response.Response{data=map[string]interface{},msg=string}  "获取用户信息"
 // @Router    /user/getUserInfo [get]
 func (b *BaseApi) GetUserInfo(c *gin.Context) {
-	uuid := utils.GetUserUuid(c)
+	uuid := jwt.GetUserUuid(c)
 	ReqUser, err := userService.GetUserInfo(uuid)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))

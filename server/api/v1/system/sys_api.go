@@ -7,7 +7,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -31,7 +31,7 @@ func (s *SystemApiApi) CreateApi(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(api, utils.ApiVerify)
+	err = validator.Verify(api, validator.ApiVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -61,7 +61,7 @@ func (s *SystemApiApi) DeleteApi(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(api.GVA_MODEL, utils.IdVerify)
+	err = validator.Verify(api.GVA_MODEL, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -91,7 +91,7 @@ func (s *SystemApiApi) GetApiList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(pageInfo.PageInfo, utils.PageInfoVerify)
+	err = validator.Verify(pageInfo.PageInfo, validator.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -126,7 +126,7 @@ func (s *SystemApiApi) GetApiById(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(idInfo, utils.IdVerify)
+	err = validator.Verify(idInfo, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -156,7 +156,7 @@ func (s *SystemApiApi) UpdateApi(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(api, utils.ApiVerify)
+	err = validator.Verify(api, validator.ApiVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

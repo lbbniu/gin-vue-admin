@@ -5,7 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -103,7 +103,7 @@ func (s *DictionaryDetailApi) FindSysDictionaryDetail(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(detail, utils.IdVerify)
+	err = validator.Verify(detail, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

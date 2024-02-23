@@ -7,7 +7,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -24,7 +25,7 @@ type AuthorityMenuApi struct{}
 // @Success   200   {object}  response.Response{data=systemRes.SysMenusResponse,msg=string}  "获取用户动态路由,返回包括系统菜单详情列表"
 // @Router    /menu/getMenu [post]
 func (a *AuthorityMenuApi) GetMenu(c *gin.Context) {
-	menus, err := menuService.GetMenuTree(utils.GetUserAuthorityId(c))
+	menus, err := menuService.GetMenuTree(jwt.GetUserAuthorityId(c))
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
@@ -70,7 +71,7 @@ func (a *AuthorityMenuApi) AddMenuAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err := utils.Verify(authorityMenu, utils.AuthorityIdVerify); err != nil {
+	if err := validator.Verify(authorityMenu, validator.AuthorityIdVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -98,7 +99,7 @@ func (a *AuthorityMenuApi) GetMenuAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(param, utils.AuthorityIdVerify)
+	err = validator.Verify(param, validator.AuthorityIdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -128,12 +129,12 @@ func (a *AuthorityMenuApi) AddBaseMenu(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(menu, utils.MenuVerify)
+	err = validator.Verify(menu, validator.MenuVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(menu.Meta, utils.MenuMetaVerify)
+	err = validator.Verify(menu.Meta, validator.MenuMetaVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -163,7 +164,7 @@ func (a *AuthorityMenuApi) DeleteBaseMenu(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(menu, utils.IdVerify)
+	err = validator.Verify(menu, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -193,12 +194,12 @@ func (a *AuthorityMenuApi) UpdateBaseMenu(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(menu, utils.MenuVerify)
+	err = validator.Verify(menu, validator.MenuVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(menu.Meta, utils.MenuMetaVerify)
+	err = validator.Verify(menu.Meta, validator.MenuMetaVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -228,7 +229,7 @@ func (a *AuthorityMenuApi) GetBaseMenuById(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(idInfo, utils.IdVerify)
+	err = validator.Verify(idInfo, validator.IdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -258,7 +259,7 @@ func (a *AuthorityMenuApi) GetMenuList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(pageInfo, utils.PageInfoVerify)
+	err = validator.Verify(pageInfo, validator.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

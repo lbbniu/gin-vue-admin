@@ -4,11 +4,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"github.com/gin-gonic/gin"
 )
 
 var casbinService = service.ServiceGroupApp.SystemServiceGroup.CasbinService
@@ -16,7 +17,7 @@ var casbinService = service.ServiceGroupApp.SystemServiceGroup.CasbinService
 // CasbinHandler 拦截器
 func CasbinHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		waitUse, _ := utils.GetClaims(c)
+		waitUse, _ := jwt.GetClaims(c)
 		//获取请求的PATH
 		path := c.Request.URL.Path
 		obj := strings.TrimPrefix(path, global.GVA_CONFIG.System.RouterPrefix)

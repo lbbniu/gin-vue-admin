@@ -1,13 +1,14 @@
-package utils
+package jwt
 
 import (
 	"errors"
 	"time"
 
-	jwt "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	pkgtime "github.com/flipped-aurora/gin-vue-admin/server/pkg/time"
 )
 
 type JWT struct {
@@ -15,10 +16,10 @@ type JWT struct {
 }
 
 var (
-	TokenExpired     = errors.New("Token is expired")
-	TokenNotValidYet = errors.New("Token not active yet")
-	TokenMalformed   = errors.New("That's not even a token")
-	TokenInvalid     = errors.New("Couldn't handle this token:")
+	TokenExpired     = errors.New("token is expired")
+	TokenNotValidYet = errors.New("token not active yet")
+	TokenMalformed   = errors.New("that's not even a token")
+	TokenInvalid     = errors.New("couldn't handle this token")
 )
 
 func NewJWT() *JWT {
@@ -28,8 +29,8 @@ func NewJWT() *JWT {
 }
 
 func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
-	bf, _ := ParseDuration(global.GVA_CONFIG.JWT.BufferTime)
-	ep, _ := ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
+	bf, _ := pkgtime.ParseDuration(global.GVA_CONFIG.JWT.BufferTime)
+	ep, _ := pkgtime.ParseDuration(global.GVA_CONFIG.JWT.ExpiresTime)
 	claims := request.CustomClaims{
 		BaseClaims: baseClaims,
 		BufferTime: int64(bf / time.Second), // 缓冲时间1天 缓冲时间内会获得新的token刷新令牌 此时一个用户会存在两个有效令牌 但是前端只留一个 另一个会丢失
@@ -43,7 +44,7 @@ func (j *JWT) CreateClaims(baseClaims request.BaseClaims) request.CustomClaims {
 	return claims
 }
 
-// 创建一个token
+// CreateToken 创建一个token
 func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString(j.SigningKey)
@@ -57,13 +58,14 @@ func (j *JWT) CreateTokenByOldToken(oldToken string, claims request.CustomClaims
 	return v.(string), err
 }
 
-// 解析 token
+// ParseToken 解析 token
 func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &request.CustomClaims{}, func(token *jwt.Token) (i interface{}, e error) {
 		return j.SigningKey, nil
 	})
 	if err != nil {
-		if ve, ok := err.(*jwt.ValidationError); ok {
+		var ve *jwt.ValidationError
+		if errors.As(err, &ve) {
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
 				return nil, TokenMalformed
 			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
@@ -81,7 +83,6 @@ func (j *JWT) ParseToken(tokenString string) (*request.CustomClaims, error) {
 			return claims, nil
 		}
 		return nil, TokenInvalid
-
 	} else {
 		return nil, TokenInvalid
 	}

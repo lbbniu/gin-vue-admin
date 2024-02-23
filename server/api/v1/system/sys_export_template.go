@@ -7,8 +7,9 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
@@ -35,10 +36,10 @@ func (sysExportTemplateApi *SysExportTemplateApi) CreateSysExportTemplate(c *gin
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	verify := utils.Rules{
-		"Name": {utils.NotEmpty()},
+	verify := validator.Rules{
+		"Name": {validator.NotEmpty()},
 	}
-	if err := utils.Verify(sysExportTemplate, verify); err != nil {
+	if err := validator.Verify(sysExportTemplate, verify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -114,10 +115,10 @@ func (sysExportTemplateApi *SysExportTemplateApi) UpdateSysExportTemplate(c *gin
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	verify := utils.Rules{
-		"Name": {utils.NotEmpty()},
+	verify := validator.Rules{
+		"Name": {validator.NotEmpty()},
 	}
-	if err := utils.Verify(sysExportTemplate, verify); err != nil {
+	if err := validator.Verify(sysExportTemplate, verify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -200,7 +201,7 @@ func (sysExportTemplateApi *SysExportTemplateApi) ExportExcel(c *gin.Context) {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败", c)
 	} else {
-		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", name+utils.RandomString(6)+".xlsx")) // 对下载的文件重命名
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", name+fmt2.RandomString(6)+".xlsx")) // 对下载的文件重命名
 		c.Header("success", "true")
 		c.Data(http.StatusOK, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.Bytes())
 	}

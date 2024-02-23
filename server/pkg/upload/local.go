@@ -9,9 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"go.uber.org/zap"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/hash"
 )
 
 type Local struct{}
@@ -30,7 +31,7 @@ func (*Local) UploadFile(file *multipart.FileHeader) (string, string, error) {
 	ext := path.Ext(file.Filename)
 	// 读取文件名并加密
 	name := strings.TrimSuffix(file.Filename, ext)
-	name = utils.MD5V([]byte(name))
+	name = hash.MD5V([]byte(name))
 	// 拼接新文件名
 	filename := name + "_" + time.Now().Format("20060102150405") + ext
 	// 尝试创建此路径

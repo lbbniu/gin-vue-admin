@@ -3,6 +3,8 @@ package system
 import (
 	"errors"
 	"fmt"
+	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"net/url"
 	"os"
 	"strings"
@@ -10,8 +12,6 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -30,12 +30,12 @@ type AutoCodeApi struct{}
 func (autoApi *AutoCodeApi) PreviewTemp(c *gin.Context) {
 	var a system.AutoCodeStruct
 	_ = c.ShouldBindJSON(&a)
-	if err := utils.Verify(a, utils.AutoCodeVerify); err != nil {
+	if err := validator.Verify(a, validator.AutoCodeVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
 	a.Pretreatment() // 处理go关键字
-	a.PackageT = utils.FirstUpper(a.Package)
+	a.PackageT = fmt2.FirstUpper(a.Package)
 	autoCode, err := autoCodeService.PreviewTemp(a)
 	if err != nil {
 		global.GVA_LOG.Error("预览失败!", zap.Error(err))
@@ -57,7 +57,7 @@ func (autoApi *AutoCodeApi) PreviewTemp(c *gin.Context) {
 func (autoApi *AutoCodeApi) CreateTemp(c *gin.Context) {
 	var a system.AutoCodeStruct
 	_ = c.ShouldBindJSON(&a)
-	if err := utils.Verify(a, utils.AutoCodeVerify); err != nil {
+	if err := validator.Verify(a, validator.AutoCodeVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -73,7 +73,7 @@ func (autoApi *AutoCodeApi) CreateTemp(c *gin.Context) {
 			apiIds = ids
 		}
 	}
-	a.PackageT = utils.FirstUpper(a.Package)
+	a.PackageT = fmt2.FirstUpper(a.Package)
 	err := autoCodeService.CreateTemp(a, apiIds...)
 	if err != nil {
 		if errors.Is(err, system.ErrAutoMove) {
@@ -174,7 +174,7 @@ func (autoApi *AutoCodeApi) GetColumn(c *gin.Context) {
 func (autoApi *AutoCodeApi) CreatePackage(c *gin.Context) {
 	var a system.SysAutoCode
 	_ = c.ShouldBindJSON(&a)
-	if err := utils.Verify(a, utils.AutoPackageVerify); err != nil {
+	if err := validator.Verify(a, validator.AutoPackageVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}

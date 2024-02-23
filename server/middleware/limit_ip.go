@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
-	"github.com/gin-gonic/gin"
 )
 
 type LimitConfig struct {

@@ -6,7 +6,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -32,7 +32,7 @@ func (a *AuthorityApi) CreateAuthority(c *gin.Context) {
 		return
 	}
 
-	if err = utils.Verify(authority, utils.AuthorityVerify); err != nil {
+	if err = validator.Verify(authority, validator.AuthorityVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -67,12 +67,12 @@ func (a *AuthorityApi) CopyAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(copyInfo, utils.OldAuthorityVerify)
+	err = validator.Verify(copyInfo, validator.OldAuthorityVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(copyInfo.Authority, utils.AuthorityVerify)
+	err = validator.Verify(copyInfo.Authority, validator.AuthorityVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -102,7 +102,7 @@ func (a *AuthorityApi) DeleteAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	if err = utils.Verify(authority, utils.AuthorityIdVerify); err != nil {
+	if err = validator.Verify(authority, validator.AuthorityIdVerify); err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
@@ -132,7 +132,7 @@ func (a *AuthorityApi) UpdateAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(auth, utils.AuthorityVerify)
+	err = validator.Verify(auth, validator.AuthorityVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -162,7 +162,7 @@ func (a *AuthorityApi) GetAuthorityList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(pageInfo, utils.PageInfoVerify)
+	err = validator.Verify(pageInfo, validator.PageInfoVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
@@ -197,7 +197,7 @@ func (a *AuthorityApi) SetDataAuthority(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	err = utils.Verify(auth, utils.AuthorityIdVerify)
+	err = validator.Verify(auth, validator.AuthorityIdVerify)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return

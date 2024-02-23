@@ -1,22 +1,24 @@
 package initialize
 
-import "github.com/flipped-aurora/gin-vue-admin/server/utils"
+import (
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
+)
 
 func init() {
-	_ = utils.RegisterRule("PageVerify",
-		utils.Rules{
-			"Page":     {utils.NotEmpty()},
-			"PageSize": {utils.NotEmpty()},
+	_ = validator.RegisterRule("PageVerify",
+		validator.Rules{
+			"Page":     {validator.NotEmpty()},
+			"PageSize": {validator.NotEmpty()},
 		},
 	)
-	_ = utils.RegisterRule("IdVerify",
-		utils.Rules{
-			"Id": {utils.NotEmpty()},
+	_ = validator.RegisterRule("IdVerify",
+		validator.Rules{
+			"Id": {validator.NotEmpty()},
 		},
 	)
-	_ = utils.RegisterRule("AuthorityIdVerify",
-		utils.Rules{
-			"AuthorityId": {utils.NotEmpty()},
+	_ = validator.RegisterRule("AuthorityIdVerify",
+		validator.Rules{
+			"AuthorityId": {validator.NotEmpty()},
 		},
 	)
 }

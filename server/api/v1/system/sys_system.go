@@ -5,7 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemRes "github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/server"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -62,7 +62,7 @@ func (s *SystemApi) SetSystemConfig(c *gin.Context) {
 // @Success   200  {object}  response.Response{msg=string}  "重启系统"
 // @Router    /system/reloadSystem [post]
 func (s *SystemApi) ReloadSystem(c *gin.Context) {
-	err := utils.Reload()
+	err := server.Reload()
 	if err != nil {
 		global.GVA_LOG.Error("重启系统失败!", zap.Error(err))
 		response.FailWithMessage("重启系统失败", c)

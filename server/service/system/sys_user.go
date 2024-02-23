@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/gofrs/uuid/v5"
+	"gorm.io/gorm"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"github.com/gofrs/uuid/v5"
-	"gorm.io/gorm"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/hash"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -27,7 +28,7 @@ func (userService *UserService) Register(u system.SysUser) (userInter system.Sys
 		return userInter, errors.New("用户名已注册")
 	}
 	// 否则 附加uuid 密码hash加密 注册
-	u.Password = utils.BcryptHash(u.Password)
+	u.Password = hash.BcryptHash(u.Password)
 	u.UUID = uuid.Must(uuid.NewV4())
 	err = global.GVA_DB.Create(&u).Error
 	return u, err
@@ -48,7 +49,7 @@ func (userService *UserService) Login(u *system.SysUser) (userInter *system.SysU
 	var user system.SysUser
 	err = global.GVA_DB.Where("username = ?", u.Username).Preload("Authorities").Preload("Authority").First(&user).Error
 	if err == nil {
-		if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
+		if ok := hash.BcryptCheck(u.Password, user.Password); !ok {
 			return nil, errors.New("密码错误")
 		}
 		MenuServiceApp.UserAuthorityDefaultRouter(&user)
@@ -67,10 +68,10 @@ func (userService *UserService) ChangePassword(u *system.SysUser, newPassword st
 	if err = global.GVA_DB.Where("id = ?", u.ID).First(&user).Error; err != nil {
 		return nil, err
 	}
-	if ok := utils.BcryptCheck(u.Password, user.Password); !ok {
+	if ok := hash.BcryptCheck(u.Password, user.Password); !ok {
 		return nil, errors.New("原密码错误")
 	}
-	user.Password = utils.BcryptHash(newPassword)
+	user.Password = hash.BcryptHash(newPassword)
 	err = global.GVA_DB.Save(&user).Error
 	return &user, err
 
@@ -242,6 +243,6 @@ func (userService *UserService) FindUserByUuid(uuid string) (user *system.SysUse
 //@return: err error
 
 func (userService *UserService) ResetPassword(ID uint) (err error) {
-	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", ID).Update("password", utils.BcryptHash("123456")).Error
+	err = global.GVA_DB.Model(&system.SysUser{}).Where("id = ?", ID).Update("password", hash.BcryptHash("123456")).Error
 	return err
 }

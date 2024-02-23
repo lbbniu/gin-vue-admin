@@ -6,14 +6,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/plugin/email/utils"
-	utils2 "github.com/flipped-aurora/gin-vue-admin/server/utils"
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/jwt"
+	"github.com/flipped-aurora/gin-vue-admin/server/plugin/email/utils"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 var userService = service.ServiceGroupApp.SystemServiceGroup.UserService
@@ -21,7 +21,7 @@ var userService = service.ServiceGroupApp.SystemServiceGroup.UserService
 func ErrorToEmail() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var username string
-		claims, _ := utils2.GetClaims(c)
+		claims, _ := jwt.GetClaims(c)
 		if claims.Username != "" {
 			username = claims.Username
 		} else {

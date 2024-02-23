@@ -5,9 +5,10 @@ import (
 	"mime/multipart"
 	"time"
 
+	"go.uber.org/zap"
+
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"go.uber.org/zap"
 )
 
 type AliyunOSS struct{}
