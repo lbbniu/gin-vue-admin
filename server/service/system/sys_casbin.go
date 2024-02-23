@@ -2,17 +2,18 @@ package system
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"strconv"
 	"sync"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+	_ "github.com/go-sql-driver/mysql"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
+
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	_ "github.com/go-sql-driver/mysql"
-	"go.uber.org/zap"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)

@@ -1,21 +1,18 @@
 package global
 
 import (
-	"github.com/qiniu/qmgo"
 	"sync"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/pkg/timer"
+	"github.com/qiniu/qmgo"
+	"github.com/redis/go-redis/v9"
 	"github.com/songzhibin97/gkit/cache/local_cache"
-
-	"golang.org/x/sync/singleflight"
-
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"golang.org/x/sync/singleflight"
+	"gorm.io/gorm"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/config"
-
-	"github.com/redis/go-redis/v9"
-	"github.com/spf13/viper"
-	"gorm.io/gorm"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/timer"
 )
 
 var (

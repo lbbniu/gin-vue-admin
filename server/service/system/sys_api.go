@@ -3,11 +3,12 @@ package system
 import (
 	"errors"
 	"fmt"
+
+	"gorm.io/gorm"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-
-	"gorm.io/gorm"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)

@@ -6,12 +6,13 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 	"log"
 	"os"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 type Visitor struct {

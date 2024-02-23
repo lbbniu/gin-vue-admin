@@ -3,17 +3,18 @@ package system
 import (
 	"errors"
 	"fmt"
-	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 	"net/url"
 	"os"
 	"strings"
 
+	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
+	fmtapi "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/validator"
 )
 
 type AutoCodeApi struct{}
@@ -35,7 +36,7 @@ func (autoApi *AutoCodeApi) PreviewTemp(c *gin.Context) {
 		return
 	}
 	a.Pretreatment() // 处理go关键字
-	a.PackageT = fmt2.FirstUpper(a.Package)
+	a.PackageT = fmtapi.FirstUpper(a.Package)
 	autoCode, err := autoCodeService.PreviewTemp(a)
 	if err != nil {
 		global.GVA_LOG.Error("预览失败!", zap.Error(err))
@@ -73,7 +74,7 @@ func (autoApi *AutoCodeApi) CreateTemp(c *gin.Context) {
 			apiIds = ids
 		}
 	}
-	a.PackageT = fmt2.FirstUpper(a.Package)
+	a.PackageT = fmtapi.FirstUpper(a.Package)
 	err := autoCodeService.CreateTemp(a, apiIds...)
 	if err != nil {
 		if errors.Is(err, system.ErrAutoMove) {

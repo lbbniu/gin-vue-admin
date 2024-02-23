@@ -2,11 +2,13 @@ package system
 
 import (
 	"context"
+
+	"github.com/pkg/errors"
+	"gorm.io/gorm"
+
 	sysModel "github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
 	"github.com/flipped-aurora/gin-vue-admin/server/service/system"
-	"github.com/pkg/errors"
-	"gorm.io/gorm"
 )
 
 const initOrderAuthority = initOrderCasbin + 1

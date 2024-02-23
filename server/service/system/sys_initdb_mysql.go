@@ -4,17 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	fmt2 "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
 	"path/filepath"
 
-	"github.com/flipped-aurora/gin-vue-admin/server/config"
-	"github.com/gookit/color"
-
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/gofrs/uuid/v5"
+	"github.com/gookit/color"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/config"
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	pkgfmt "github.com/flipped-aurora/gin-vue-admin/server/pkg/fmt"
 )
 
 type MysqlInitHandler struct{}
@@ -32,7 +32,7 @@ func (h MysqlInitHandler) WriteConfig(ctx context.Context) error {
 	global.GVA_CONFIG.System.DbType = "mysql"
 	global.GVA_CONFIG.Mysql = c
 	global.GVA_CONFIG.JWT.SigningKey = uuid.Must(uuid.NewV4()).String()
-	cs := fmt2.StructToMap(global.GVA_CONFIG)
+	cs := pkgfmt.StructToMap(global.GVA_CONFIG)
 	for k, v := range cs {
 		global.GVA_VP.Set(k, v)
 	}

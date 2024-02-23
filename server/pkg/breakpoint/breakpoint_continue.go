@@ -2,10 +2,11 @@ package breakpoint
 
 import (
 	"errors"
-	"github.com/flipped-aurora/gin-vue-admin/server/pkg/hash"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/hash"
 )
 
 // 前端传来文件片与当前片为什么文件的第几片

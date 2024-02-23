@@ -2,9 +2,10 @@ package utils
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	"strconv"
 )
 
 func RegisterApis(apis ...system.SysApi) {

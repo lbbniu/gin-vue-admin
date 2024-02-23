@@ -2,11 +2,13 @@ package system
 
 import (
 	"errors"
+
+	"gorm.io/gorm"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system/response"
-	"gorm.io/gorm"
 )
 
 type AuthorityBtnService struct{}

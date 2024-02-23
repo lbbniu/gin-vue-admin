@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"github.com/flipped-aurora/gin-vue-admin/server/utils"
-	"github.com/xuri/excelize/v2"
-	"gorm.io/gorm"
 	"mime/multipart"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
+
+	"gorm.io/gorm"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"github.com/flipped-aurora/gin-vue-admin/server/pkg/json"
 )
 
 type SysExportTemplateService struct {
@@ -128,7 +129,7 @@ func (sysExportTemplateService *SysExportTemplateService) ExportExcel(templateID
 		return
 	}
 	var templateInfoMap = make(map[string]string)
-	columns, err := utils.GetJSONKeys(template.TemplateInfo)
+	columns, err := json.GetJSONKeys(template.TemplateInfo)
 	if err != nil {
 		return nil, "", err
 	}

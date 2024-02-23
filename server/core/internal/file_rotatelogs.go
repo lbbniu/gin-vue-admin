@@ -1,9 +1,11 @@
 package internal
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
-	"go.uber.org/zap/zapcore"
 	"os"
+
+	"go.uber.org/zap/zapcore"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 )
 
 var FileRotatelogs = new(fileRotatelogs)
