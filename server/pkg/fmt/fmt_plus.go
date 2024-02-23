@@ -2,7 +2,6 @@ package fmt
 
 import (
 	"fmt"
-	"math/rand"
 	"reflect"
 	"strings"
 )
@@ -65,18 +64,4 @@ func MaheHump(s string) string {
 	}
 
 	return strings.Join(words, "")
-}
-
-// RandomString 随机字符串
-func RandomString(n int) string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-	b := make([]rune, n)
-	for i := range b {
-		b[i] = letters[RandomInt(0, len(letters))]
-	}
-	return string(b)
-}
-
-func RandomInt(min, max int) int {
-	return min + rand.Intn(max-min)
 }
